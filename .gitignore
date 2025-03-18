@@ -1,0 +1,40 @@
+# Node.js dependencies
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build output
+dist/
+build/
+
+# TypeScript compiled files
+*.js  # Ignore compiled JS files if you're using TypeScript (adjust as needed)
+*.js.map
+*.tsbuildinfo
+
+# Logs
+logs/
+*.log
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# OS-specific files
+.DS_Store  # macOS
+Thumbs.db  # Windows
+
+# Editor-specific files
+.vscode/
+.idea/
+*.sublime-workspace
+
+# Temporary files
+*.tmp
+*.swp
+
+# Coverage reports (if you use testing tools)
+coverage/
