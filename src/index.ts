@@ -6,6 +6,7 @@ import { connectDB } from "./config/dbConfig";
 import { ErrorMiddleware } from "./middlewares/error";
 import userRouter from "./routes/authRoutes";
 import cloudinary from "./config/cloundinary";
+import courseRouter from "./routes/courseRoutes";
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ app.use(
 );
 //routes
 app.use("/api/user", userRouter);
+app.use("/api/course", courseRouter);
 //test api
 app.get("/test", (req: Request, res: Response, next: NextFunction) => {
   res.status(200).json({
