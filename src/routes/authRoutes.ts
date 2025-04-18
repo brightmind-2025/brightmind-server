@@ -10,6 +10,7 @@ import {
   updatePassword,
   socialLogin,
   updateUserProfile,
+  getAllUsers,
 } from "../controllers/authController";
 import { isAuthenticated } from "../middlewares/auth";
 
@@ -26,4 +27,5 @@ userRouter
   .put("/update-user-info", isAuthenticated, updateUserInfo)
   .put("/update-user-password", isAuthenticated, updatePassword)
   .put("/update-user-avatar", isAuthenticated, updateUserProfile)
+  .get("/get-all-users", getAllUsers);
 export default userRouter;

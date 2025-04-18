@@ -12,14 +12,15 @@ dotenv.config();
 
 const app = express();
 //body parser
-app.use(express.json({ limit: "50mb" }));
-//cookie parser
-app.use(cookieParser());
 app.use(
   cors({
     origin: process.env.ORIGIN,
+    credentials: true,
   })
 );
+app.use(express.json({ limit: "50mb" }));
+//cookie parser
+app.use(cookieParser());
 //routes
 app.use("/api/user", userRouter);
 app.use("/api/course", courseRouter);
