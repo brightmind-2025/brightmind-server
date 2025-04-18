@@ -2,7 +2,10 @@ import { NextFunction, Request, Response } from "express";
 import catchAsyncError from "../middlewares/catchAsyncError";
 import ErrorHandler from "../lib/util/errorHandler";
 import cloudinary from "cloudinary";
-import { createCourse } from "../services/course.services";
+import {
+  createCourse,
+  getAllCoursesService,
+} from "../services/course.services";
 import CourseModel from "../models/courseModel";
 import { redis } from "../config/redis";
 import mongoose from "mongoose";
@@ -85,7 +88,8 @@ export const getSingleCourse = catchAsyncError(
         const course = await CourseModel.findById(req.params.id).select(
           "-courseData.videoUrl -courseData.suggestion -courseData.questions -courseData.links"
         );
-        await redis.set(courseId, JSON.stringify(course));
+
+        await redis.set(courseId, JSON.stringify(course), "EX", 604800); // Cache for 7 days
 
         res.status(200).json({
           success: true,
@@ -380,13 +384,46 @@ export const addReplyToReview = catchAsyncError(
       };
       if (!review.commentReplies) {
         review.commentReplies = [];
-      } 
+      }
       review.commentReplies?.push(replyData);
       await course?.save();
       res.status(200).json({
         success: true,
         message: "Reply added successfully",
         course,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
+// get all courses for admin
+export const getAllCourses_Admin = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      getAllCoursesService(res);
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
+
+// delete course
+export const deleteCourse = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const course = await CourseModel.findById(id);
+      if (!course) {
+        return next(new ErrorHandler("Course not found", 404));
+      }
+
+      await course.deleteOne({ id });
+      await redis.del(id);
+      res.status(200).json({
+        success: true,
+        message: "Course deleted successfully",
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));

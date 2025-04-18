@@ -7,14 +7,19 @@ import { ErrorMiddleware } from "./middlewares/error";
 import userRouter from "./routes/authRoutes";
 import cloudinary from "./config/cloundinary";
 import courseRouter from "./routes/courseRoutes";
+import orderRouter from "./routes/orderRoutes";
+import notificationRouter from "./routes/notificationRoutes";
+import analyticsRouter from "./routes/analyticsRoutes";
+import layoutRouter from "./routes/layoutRoute";
 
 dotenv.config();
 
 const app = express();
-//body parser
+
 app.use(
   cors({
     origin: process.env.ORIGIN,
+
     credentials: true,
   })
 );
@@ -24,6 +29,10 @@ app.use(cookieParser());
 //routes
 app.use("/api/user", userRouter);
 app.use("/api/course", courseRouter);
+app.use("/api/order", orderRouter);
+app.use("/api/notification", notificationRouter);
+app.use("/api/analytics", analyticsRouter);
+app.use("/api/layout", layoutRouter);
 //test api
 app.get("/test", (req: Request, res: Response, next: NextFunction) => {
   res.status(200).json({
