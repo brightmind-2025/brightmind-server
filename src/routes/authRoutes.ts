@@ -11,8 +11,6 @@ import {
   socialLogin,
   updateUserProfile,
   getAllUsers,
-  updateUserRole,
-  deleteUser,
 } from "../controllers/authController";
 import { authorizeRoles, isAuthenticated } from "../middlewares/auth";
 
@@ -29,12 +27,6 @@ userRouter
   .put("/update-user-info", isAuthenticated, updateUserInfo)
   .put("/update-user-password", isAuthenticated, updatePassword)
   .put("/update-user-avatar", isAuthenticated, updateUserProfile)
-  .get("/get-users", isAuthenticated, authorizeRoles("admin"), getAllUsers)
-  .put(
-    "/update-user-role",
-    isAuthenticated,
-    authorizeRoles("admin"),
-    updateUserRole
-  )
-  .delete("/delete-user/:id", isAuthenticated, authorizeRoles("admin"), deleteUser);
+  .get("/get-all-users", getAllUsers);
+
 export default userRouter;
