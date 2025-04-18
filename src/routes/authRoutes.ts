@@ -28,4 +28,5 @@ userRouter
   .put("/update-user-password", isAuthenticated, updatePassword)
   .put("/update-user-avatar", isAuthenticated, updateUserProfile)
   .get("/get-all-users", getAllUsers);
+  
 export default userRouter;
