@@ -11,11 +11,13 @@ import courseRouter from "./routes/courseRoutes";
 dotenv.config();
 
 const app = express();
-//body parser
+
+
 app.use(
   cors({
     origin: process.env.ORIGIN,
-    credentials:true,
+
+    credentials: true,
   })
 );
 app.use(express.json({ limit: "50mb" }));
