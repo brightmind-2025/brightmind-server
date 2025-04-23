@@ -10,6 +10,9 @@ import CourseModel from "../models/courseModel";
 import { redis } from "../config/redis";
 import mongoose from "mongoose";
 import sendMail from "../lib/util/sendMail";
+import axios from "axios";
+import dotenv from "dotenv";
+dotenv.config();
 
 //1.course cretae
 export const uploadCourse = catchAsyncError(
@@ -427,6 +430,30 @@ export const deleteCourse = catchAsyncError(
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
+export const generateVideoUrl = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { videoId } = req.body;
+
+      const response = await axios.post(
+        `https://dev.vdocipher.com/api/videos/${videoId}/otp`,
+        { ttl: 300 },
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Apisecret ${process.env.VDOCIPHER_API_SECRET}`,
+          },
+        }
+      );
+
+      res.json(response.data);
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
     }
   }
 );
