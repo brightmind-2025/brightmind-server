@@ -15,11 +15,14 @@ import layoutRouter from "./routes/layoutRoute";
 dotenv.config();
 
 const app = express();
-
+//body parser
+app.use(express.json({ limit: "50mb" }));
+//cookie parser
+app.use(cookieParser());
+//cors origin to frontend url
 app.use(
   cors({
-    origin: process.env.ORIGIN,
-
+    origin: "http://localhost:3000",
     credentials: true,
   })
 );

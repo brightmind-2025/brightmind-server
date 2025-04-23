@@ -237,7 +237,11 @@ export const updateAccessToken = catchAsyncError(
       }
       const session = await redis.get(decoded.id as string);
       if (!session) {
-        return next(new ErrorHandler("Please login for access this resource", 400));
+
+        return next(
+          new ErrorHandler("Please login for access this resource", 400)
+        );
+
       }
       const user = JSON.parse(session);
       const accessToken = jwt.sign(
@@ -257,11 +261,10 @@ export const updateAccessToken = catchAsyncError(
       req.user = user;
       res.cookie("access_token", accessToken, accessTokenOptions);
       res.cookie("refresh_token", refreshToken, refreshTokenOptions);
-      await redis.set(user._id, JSON.stringify(user), "EX", 604800 ); //7 days
-      res.status(200).json({
-        success: true,
-        accessToken,
-      });
+
+      await redis.set(user._id, JSON.stringify(user), "EX", 604800); //7 days
+      next();
+
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }
@@ -300,16 +303,9 @@ interface IUpdateUserInfo {
 export const updateUserInfo = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { name, email } = req.body as IUpdateUserInfo;
+      const { name } = req.body as IUpdateUserInfo;
       const userId = req.user?._id;
       const user = await userModel.findById(userId);
-      if (email && user) {
-        const isEmailExist = await userModel.findOne({ email });
-        if (isEmailExist) {
-          return next(new ErrorHandler("Email already exists", 400));
-        }
-        user.email = email;
-      }
 
       if (name && user) {
         user.name = name;
