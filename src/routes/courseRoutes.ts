@@ -37,6 +37,7 @@ courseRouter
   .get(
     "/get-courses",
     updateAccessToken,
+
     isAuthenticated,
     authorizeRoles("admin"),
     getAllCourses_Admin

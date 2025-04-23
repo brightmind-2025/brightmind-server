@@ -60,4 +60,5 @@ userRouter
     authorizeRoles("admin"),
     deleteUser
   );
+
 export default userRouter;

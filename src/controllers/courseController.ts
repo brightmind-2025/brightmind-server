@@ -434,6 +434,7 @@ export const deleteCourse = catchAsyncError(
   }
 );
 
+
 export const generateVideoUrl = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -457,3 +458,4 @@ export const generateVideoUrl = catchAsyncError(
     }
   }
 );
+

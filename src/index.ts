@@ -26,6 +26,9 @@ app.use(
     credentials: true,
   })
 );
+app.use(express.json({ limit: "50mb" }));
+//cookie parser
+app.use(cookieParser());
 //routes
 app.use("/api/user", userRouter);
 app.use("/api/course", courseRouter);

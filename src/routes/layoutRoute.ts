@@ -10,4 +10,5 @@ layoutRouter
   .get("/get-layout", updateAccessToken,isAuthenticated, getLayoutByType)
 
 
+
 export default layoutRouter;

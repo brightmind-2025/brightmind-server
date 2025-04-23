@@ -237,9 +237,11 @@ export const updateAccessToken = catchAsyncError(
       }
       const session = await redis.get(decoded.id as string);
       if (!session) {
+
         return next(
           new ErrorHandler("Please login for access this resource", 400)
         );
+
       }
       const user = JSON.parse(session);
       const accessToken = jwt.sign(
@@ -259,15 +261,17 @@ export const updateAccessToken = catchAsyncError(
       req.user = user;
       res.cookie("access_token", accessToken, accessTokenOptions);
       res.cookie("refresh_token", refreshToken, refreshTokenOptions);
+
       await redis.set(user._id, JSON.stringify(user), "EX", 604800); //7 days
       next();
+
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }
   }
 );
 
-//get user info
+
 export const getUserInfo = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -279,6 +283,16 @@ export const getUserInfo = catchAsyncError(
   }
 );
 
+export const getAllUsers = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const users = await userModel.find().select("-password");
+      res.status(200).json(users);
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
 //update user info
 
 interface IUpdateUserInfo {
@@ -309,7 +323,7 @@ export const updateUserInfo = catchAsyncError(
   }
 );
 
-//update user password
+
 interface IUpdatePassword {
   oldPassword: string;
   newPassword: string;
