@@ -1,4 +1,4 @@
-cd cdimport { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 
 const tryCatch = (fn: Function) => {
   return (req: Request, res: Response, next: NextFunction) => {

@@ -283,16 +283,7 @@ export const getUserInfo = catchAsyncError(
   }
 );
 
-export const getAllUsers = catchAsyncError(
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const users = await userModel.find().select("-password");
-      res.status(200).json(users);
-    } catch (error: any) {
-      return next(new ErrorHandler(error.message, 500));
-    }
-  }
-);
+
 //update user info
 
 interface IUpdateUserInfo {
@@ -405,9 +396,10 @@ export const updateUserProfile = catchAsyncError(
 export const getAllUsers = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      getAllUsersService(res);
+      const users = await userModel.find().select("-password");
+      res.status(200).json(users);
     } catch (error: any) {
-      return next(new ErrorHandler(error.message, 400));
+      return next(new ErrorHandler(error.message, 500));
     }
   }
 );
