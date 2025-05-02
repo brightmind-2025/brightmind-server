@@ -58,11 +58,12 @@ app.all("*", (req: Request, res: Response, next: NextFunction) => {
   next(err);
 });
 
+// Error Middleware
 app.use(ErrorMiddleware);
 
-// Start server
+// Start Server
 const server = http.createServer(app);
-initSocketServer(server); // ✅ Start socket server
+initSocketServer(server);
 
 const port = process.env.PORT || 3001;
 
