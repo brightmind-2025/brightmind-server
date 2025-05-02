@@ -31,7 +31,7 @@ courseRouter
   .get("/get-all-courses", getAllCourses)
   .get("/get-course-content/:id", updateAccessToken,isAuthenticated, getCourseByUser)
   .put("/add-question", updateAccessToken,isAuthenticated, addQuestion)
-  .put("/add-answer", updateAccessToken,isAuthenticated, authorizeRoles("admin"), addAnswer)
+  .put("/add-answer", updateAccessToken,isAuthenticated, addAnswer)
   .put("/add-review/:id", updateAccessToken,isAuthenticated, addReview)
   .put("/add-reply", updateAccessToken,isAuthenticated, authorizeRoles("admin"), addReplyToReview)
   .get(
