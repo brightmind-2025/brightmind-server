@@ -283,7 +283,16 @@ export const getUserInfo = catchAsyncError(
   }
 );
 
-
+export const getAllUsers2 = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const users = await userModel.find().select("-password");
+      res.status(200).json(users);
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
 //update user info
 
 interface IUpdateUserInfo {
@@ -348,7 +357,7 @@ export const updatePassword = catchAsyncError(
 
 //update user profile
 interface IUpdateProfile {
-  avatar: string;
+  avatar?: string; // avatar is optional now
 }
 
 export const updateUserProfile = catchAsyncError(
@@ -357,32 +366,31 @@ export const updateUserProfile = catchAsyncError(
       const { avatar } = req.body as IUpdateProfile;
       const userId = req.user?._id;
       const user = await userModel.findById(userId);
-      if (avatar && user) {
-        if (user?.avatar?.public_id) {
-          await cloudinary.uploader.destroy(user?.avatar?.public_id);
-          const cloud = await cloudinary.uploader.upload(avatar, {
-            folder: "brightmind",
-          });
-          user.avatar = {
-            public_id: cloud.public_id,
-            url: cloud.secure_url,
-          };
-        } else {
-          const cloud = await cloudinary.uploader.upload(avatar, {
-            folder: "brightmind",
-          });
-          user.avatar = {
-            public_id: cloud.public_id,
-            url: cloud.secure_url,
-          };
-        }
+
+      if (!user) {
+        return next(new ErrorHandler("User not found", 404));
       }
 
-      await user?.save();
+      if (avatar) {
+        // Only update avatar if new avatar is provided
+        if (user.avatar?.public_id) {
+          await cloudinary.uploader.destroy(user.avatar.public_id);
+        }
+        const cloud = await cloudinary.uploader.upload(avatar, {
+          folder: "brightmind",
+        });
+        user.avatar = {
+          public_id: cloud.public_id,
+          url: cloud.secure_url,
+        };
+      }
+
+      await user.save();
       await redis.set(userId as string, JSON.stringify(user));
+
       res.status(200).json({
         success: true,
-        message: "User updated",
+        message: "User updated successfully",
         user,
       });
     } catch (error: any) {
@@ -396,10 +404,9 @@ export const updateUserProfile = catchAsyncError(
 export const getAllUsers = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const users = await userModel.find().select("-password");
-      res.status(200).json(users);
+      getAllUsersService(res);
     } catch (error: any) {
-      return next(new ErrorHandler(error.message, 500));
+      return next(new ErrorHandler(error.message, 400));
     }
   }
 );
@@ -427,7 +434,7 @@ export const deleteUser = catchAsyncError(
       if (!user) {
         return next(new ErrorHandler("User not found", 404));
       }
-      await user.deleteOne({ id });
+      await user.deleteOne();
       await redis.del(id);
       res.status(200).json({
         success: true,
